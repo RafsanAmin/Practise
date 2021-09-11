@@ -1,0 +1,87 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script
+      src="https://cdn.socket.io/3.1.3/socket.io.min.js"
+      integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <style>
+    * {
+      font-family: Jost;
+    }
+    div {
+      margin: 1rem;
+    }
+    #msg div {
+      display: inline-block;
+      border: 1px solid #000;
+      margin: 0.25rem;
+      min-width: 200px;
+      text-align: center;
+      padding: 0.25rem 0.5rem;
+    }
+  </style>
+  <body>
+    <div>
+      <label>UserName: </label>
+      <input id="usr" value="<%= x %>" />
+    </div>
+    <h1>Chat With Me</h1>
+    <div id="msg"></div>
+    <div>
+      <label>Massage: </label>
+      <input id="input" onfocus="typing()" />
+      <button onclick="func()">Send</button>
+    </div>
+    <div>
+      <label>Join: </label>
+      <input id="join" />
+      <button onclick="join()">Join</button>
+    </div>
+  </body>
+  <script>
+    const socket = io('/chat');
+    let room = '';
+    socket.on('connect', () => {
+      display(socket.id);
+    });
+    socket.on('msg-c', (val) => {
+      display(val);
+    });
+    socket.on('typing', (val) => display(val));
+    function display(cal, elem) {
+      let a = document.createElement('div');
+      let b = document.createElement('br');
+      a.append(cal);
+      document.getElementById('msg').appendChild(a);
+      document.getElementById('msg').appendChild(b);
+    }
+    function func() {
+      let val = document.querySelector('#input').value.trim();
+      let usr = document.querySelector('#usr').value.trim();
+      if (val && usr) {
+        display(`${usr} - ${val}`);
+        socket.emit('msg', `${usr} - ${val}`, room);
+      } else {
+        alert('Wrong!!');
+      }
+    }
+    function join() {
+      let val = document.querySelector('#join').value;
+      room = val;
+      if (val) {
+        socket.emit('join', val, (hello) => {
+          display(`joined ${hello}`);
+        });
+      } else {
+        alert('Faaka!!');
+      }
+    }
+    console.log(socket);
+  </script>
+</html>
