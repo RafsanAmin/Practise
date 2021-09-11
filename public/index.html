@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script
+      src="https://cdn.socket.io/3.1.3/socket.io.min.js"
+      integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <input>
+    <h1>Hello World!</h1>
+    <div id="hello"></div>
+    <input id="input"></input>
+    <input id="join"></input>      
+    <button onclick="func()">Hello</button>
+    <button onclick="join()">Join</button>
+  </body>
+  <script>
+    const socket = io('http://localhost:3000');
+    let room = '';
+    socket.on('connect', () => {
+      display(socket.id);
+    });
+    socket.on('msg-c', (val) => {
+       display(val);
+    })
+    function display(cal, elem){   
+      let a = document.createElement('li');   
+      a.append(cal);
+      document.getElementById('hello').appendChild(a);
+    }
+    function func(){
+      let val = document.querySelector('#input').value;
+      display(val);
+      socket.emit('msg', val, room);
+    }
+    function join(){
+      let val = document.querySelector('#join').value;
+      room = val;
+      socket.emit('join', val, (hello) => {
+        display(`joined ${hello}`)
+      });
+    }
+    console.log(socket);
+  </script>
+</html>
