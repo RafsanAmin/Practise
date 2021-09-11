@@ -20,7 +20,7 @@
     <button onclick="join()">Join</button>
   </body>
   <script>
-    const socket = io('http://localhost:3000');
+    const socket = io('/');
     let room = '';
     socket.on('connect', () => {
       display(socket.id);
